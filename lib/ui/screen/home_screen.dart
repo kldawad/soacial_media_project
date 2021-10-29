@@ -1,71 +1,78 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:soacial_media_project/ui/screen/video_screen.dart';
-import 'package:soacial_media_project/ui/utils/style/text/text_style.dart';
 import 'package:soacial_media_project/ui/view_model/home_screen_view_model.dart';
+import 'package:soacial_media_project/ui/view_model/video_screen_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  PreloadPageController? _pageController;
+
+  bool isPageStable = false;
+  int current = 0;
+  bool isFirstSelected = false;
+
+  List videos = [
+    'https://assets.mixkit.co/videos/preview/mixkit-young-mother-with-her-little-daughter-decorating-a-christmas-tree-39745-large.mp4',
+    'https://assets.mixkit.co/videos/preview/mixkit-mother-with-her-little-daughter-eating-a-marshmallow-in-nature-39764-large.mp4',
+    'https://assets.mixkit.co/videos/preview/mixkit-taking-photos-from-different-angles-of-a-model-34421-large.mp4',
+    'https://assets.mixkit.co/videos/preview/mixkit-winter-fashion-cold-looking-woman-concept-video-39874-large.mp4',
+    'https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-bubble-gum-at-an-amusement-park-1226-large.mp4'
+  ];
+
+  void scrollListener() {
+    if (isPageStable &&
+        _pageController!.page! == _pageController!.page!.roundToDouble()) {
+      setState(() {
+        current = _pageController!.page!.toInt();
+        isPageStable = false;
+      });
+    } else if (!isPageStable && current.toDouble() != _pageController!.page) {
+      if ((current.toDouble() - _pageController!.page!).abs() > 0.1) {
+        setState(() {
+          isPageStable = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _pageController = PreloadPageController();
+
+    _pageController!.addListener(scrollListener);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GetX<HomeScreenViewModel>(
-      init: HomeScreenViewModel(),
-      builder: (controller) {
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () {},
-            onDoubleTap: () {},
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Container(
-                    color: Colors.orange,
-                    child: PageView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return VideoScreen(
-                          vid: controller.videos[index],
-                        );
-                      },
-                      itemCount: controller.videos.length,
-                      scrollDirection: Axis.vertical,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Trending |",
-                          style: kTitleWhite.copyWith(fontSize: 50.sp),
-                        ),
-                        Text(
-                          " My Trend",
-                          style: kTitleWhite.copyWith(fontSize: 50.sp),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10, right: 10),
-                    child: Align(
-                      alignment: AlignmentDirectional.bottomEnd,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.green,
-                        radius: 80.sp,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.red,
-                          radius: 40.sp,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+    return Scaffold(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: PreloadPageView.builder(
+            onPageChanged: (value) {
+              print('controll:: ${_pageController!.page!.roundToDouble()}');
+            },
+            controller: _pageController!,
+            preloadPagesCount: 2,
+            scrollDirection: Axis.vertical,
+            itemCount: videos.length,
+            itemBuilder: (context, index) {
+              return VideoScreen(
+                videoUrl: videos[index],
+                pageIndex: index,
+                currentPageIndex: current,
+              );
+            }),
+      ),
     );
   }
 }
