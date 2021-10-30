@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:soacial_media_project/ui/screen/profile_screen.dart';
+import 'package:soacial_media_project/ui/screen/widgets/custom_circle_avatar.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -71,6 +75,47 @@ class _VideoScreenState extends State<VideoScreen> {
                 _playerController!,
                 allowScrubbing: true,
                 colors: VideoProgressColors(),
+              ),
+              Align(
+                alignment: AlignmentDirectional.bottomEnd,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomCircleAvatar(
+                      icon: Icons.person_outline,
+                      onTap: () {
+                        Get.to(() => ProfileScreen());
+                      },
+                    ),
+                    CustomCircleAvatar(
+                      icon: Icons.format_indent_increase,
+                    ),
+                    CustomCircleAvatar(
+                      icon: Icons.chat,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 8, bottom: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CustomCircleAvatar(icon: Icons.error),
+                          CustomCircleAvatar(icon: Icons.star),
+                          CustomCircleAvatar(icon: Icons.campaign),
+                          CustomCircleAvatar(icon: Icons.file_download),
+                          CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            radius: 70.r,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red,
+                              radius: 40.r,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ],
           ),
